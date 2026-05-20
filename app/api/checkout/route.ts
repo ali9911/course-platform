@@ -1,4 +1,6 @@
-export async function POST(request) {
+import { NextRequest } from "next/server";
+
+export async function POST(request: NextRequest) {
   const body = await request.json();
   const { name, email, courseIds, total } = body;
 
