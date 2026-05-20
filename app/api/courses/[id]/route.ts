@@ -1,11 +1,11 @@
-import { NextRequest } from "next/server";
 import { getCourseById } from "@/lib/data";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  request: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const course = getCourseById(params.id);
+  const { id } = await context.params;
+  const course = getCourseById(id);
   if (!course) {
     return Response.json({ error: "Course not found" }, { status: 404 });
   }
