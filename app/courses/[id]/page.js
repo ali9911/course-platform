@@ -39,6 +39,9 @@ export default function CourseDetail() {
     setTimeout(() => setAdded(false), 2000);
   }
 
+  // Bug 1: Buy Now button does nothing
+  function handleBuyNow() {}
+
   return (
     <main style={{ fontFamily: "Cairo, sans-serif", background: "#f8fafc", minHeight: "100vh" }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');* { font-family: 'Cairo', sans-serif; }`}</style>
@@ -72,7 +75,7 @@ export default function CourseDetail() {
             <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
               {[
                 { icon: "⭐", val: `${course.rating}/5` },
-                { icon: "👥", val: `${course.students.toLocaleString()} طالب` },
+                { icon: "👥", val: `${course.students?.toLocaleString()} طالب` },
                 { icon: "🎬", val: `${course.lessons} درس` },
                 { icon: "⏱️", val: `${course.hours} ساعة` },
                 { icon: "📶", val: course.level },
@@ -88,9 +91,9 @@ export default function CourseDetail() {
             </div>
           </div>
 
-          {/* Sticky Card */}
+          {/* Purchase Card */}
           <div style={{ background: "#fff", borderRadius: 20, overflow: "hidden", boxShadow: "0 25px 60px rgba(0,0,0,0.3)" }}>
-            {/* Bug 1: wrong image URL */}
+            {/* Bug — wrong image URL */}
             <div style={{ position: "relative" }}>
               <img src={`https://picsum.photos/800/450`} alt={course.title} style={{ width: "100%", height: 200, objectFit: "cover" }} />
               <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -108,16 +111,17 @@ export default function CourseDetail() {
                   <button onClick={handleAdd} style={{ width: "100%", background: added ? "#059669" : "linear-gradient(135deg, #2563eb, #1d4ed8)", color: "#fff", padding: "14px 0", borderRadius: 12, fontWeight: 800, fontSize: 16, border: "none", cursor: "pointer", marginBottom: 12, transition: "all 0.3s" }}>
                     {added ? "✓ اتضاف للسلة!" : "🛒 أضف للسلة"}
                   </button>
-                  <Link href="/cart" style={{ display: "block", width: "100%", background: "#f8fafc", color: "#0f172a", padding: "13px 0", borderRadius: 12, fontWeight: 700, fontSize: 15, textAlign: "center", textDecoration: "none", border: "1px solid #e2e8f0" }}>
-                    اشتري دلوقتي
-                  </Link>
+                  {/* Bug 1: Buy Now button does nothing */}
+                  <button onClick={handleBuyNow} style={{ width: "100%", background: "#f8fafc", color: "#0f172a", padding: "13px 0", borderRadius: 12, fontWeight: 700, fontSize: 15, border: "1px solid #e2e8f0", cursor: "pointer", marginBottom: 12 }}>
+                    ⚡ اشتري دلوقتي
+                  </button>
                 </>
               )}
               <p style={{ color: "#64748b", fontSize: 13, textAlign: "center", marginTop: 12 }}>ضمان استرداد الأموال خلال 30 يوم</p>
               <div style={{ borderTop: "1px solid #f1f5f9", marginTop: 20, paddingTop: 20 }}>
                 <p style={{ fontWeight: 800, color: "#0f172a", marginBottom: 12, fontSize: 15 }}>الكورس بيشمل:</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {course.includes.map((item, i) => (
+                  {course.includes?.map((item, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, color: "#475569", fontSize: 14 }}>
                       <span style={{ color: "#2563eb" }}>✓</span> {item}
                     </div>
@@ -136,12 +140,12 @@ export default function CourseDetail() {
           <section style={{ background: "#fff", borderRadius: 20, padding: 32, marginBottom: 28, border: "1px solid #e2e8f0" }}>
             <h2 style={{ fontSize: 22, fontWeight: 900, color: "#0f172a", marginBottom: 24 }}>محتوى الكورس</h2>
             <div style={{ display: "flex", gap: 24, marginBottom: 20, color: "#64748b", fontSize: 14 }}>
-              <span>📚 {course.curriculum.length} أقسام</span>
+              <span>📚 {course.curriculum?.length} أقسام</span>
               <span>🎬 {course.lessons} درس</span>
               <span>⏱️ {course.hours} ساعة</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {course.curriculum.map((section, i) => (
+              {course.curriculum?.map((section, i) => (
                 <div key={i} style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
                   <button onClick={() => setOpenSection(openSection === i ? null : i)}
                     style={{ width: "100%", padding: "16px 20px", background: openSection === i ? "#f8faff" : "#fafafa", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -174,15 +178,15 @@ export default function CourseDetail() {
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               <div style={{ width: 72, height: 72, background: cfg.gradient, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👨‍💻</div>
               <div>
-                <h3 style={{ fontSize: 18, fontWeight: 900, color: "#0f172a", marginBottom: 4 }}>{course.instructor.name}</h3>
-                <p style={{ color: "#2563eb", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{course.instructor.title}</p>
-                <p style={{ color: "#64748b", fontSize: 14 }}>{course.instructor.experience}</p>
+                <h3 style={{ fontSize: 18, fontWeight: 900, color: "#0f172a", marginBottom: 4 }}>{course.instructor?.name}</h3>
+                <p style={{ color: "#2563eb", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{course.instructor?.title}</p>
+                <p style={{ color: "#64748b", fontSize: 14 }}>{course.instructor?.experience}</p>
               </div>
             </div>
           </section>
         </div>
 
-        {/* Sidebar placeholder */}
+        {/* Sidebar */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ background: "#fff", borderRadius: 20, padding: 24, border: "1px solid #e2e8f0" }}>
             <h3 style={{ fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 16 }}>⭐ تقييمات الطلاب</h3>
@@ -190,7 +194,7 @@ export default function CourseDetail() {
               <span style={{ fontSize: 48, fontWeight: 900, color: "#0f172a" }}>{course.rating}</span>
               <div>
                 <div style={{ color: "#f59e0b", fontSize: 20, marginBottom: 4 }}>{"★".repeat(5)}</div>
-                <p style={{ color: "#64748b", fontSize: 14 }}>{course.students.toLocaleString()} طالب</p>
+                <p style={{ color: "#64748b", fontSize: 14 }}>{course.students?.toLocaleString()} طالب</p>
               </div>
             </div>
           </div>
