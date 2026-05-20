@@ -20,12 +20,17 @@ export default function Content() {
   const [content, setContent] = useState(null);
   const [activeLesson, setActiveLesson] = useState(0);
   const [progress, setProgress] = useState(15);
+  const [enrollMessage, setEnrollMessage] = useState(false);
 
   useEffect(() => {
     // Bug 3: fetches content without verifying purchase
+    // Bug 5: shows fake enrollment success message to all users
     fetch(`/api/content/${id}`)
       .then(r => r.json())
-      .then(data => setContent(data.content));
+      .then(data => {
+        setContent(data.content);
+        setEnrollMessage(true);
+      });
   }, [id]);
 
   if (!course) return <div style={{ padding: 40, textAlign: "center" }}>الكورس مش موجود</div>;
@@ -54,6 +59,15 @@ export default function Content() {
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
       `}</style>
 
+      {/* Bug 5: Fake enrollment success banner shown to ALL users */}
+      {enrollMessage && (
+        <div style={{ background: "linear-gradient(135deg, #059669, #047857)", padding: "14px 24px", textAlign: "center", fontSize: 15, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+          <span>🎉</span>
+          <span>مرحباً بك! تم تفعيل اشتراكك في الكورس بنجاح — استمتع بالتعلم!</span>
+          <button onClick={() => setEnrollMessage(false)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.7)", cursor: "pointer", fontSize: 18, marginRight: "auto" }}>×</button>
+        </div>
+      )}
+
       {/* Navbar */}
       <nav style={{ background: "rgba(15,23,42,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)", position: "sticky", top: 0, zIndex: 100 }}>
         <div style={{ maxWidth: "100%", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -72,11 +86,9 @@ export default function Content() {
               </div>
               <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 13 }}>{progress}% مكتمل</span>
             </div>
-            {purchased && (
-              <div style={{ background: "rgba(37,99,235,0.2)", border: "1px solid rgba(37,99,235,0.4)", padding: "6px 14px", borderRadius: 100, fontSize: 13, color: "#93c5fd", fontWeight: 600 }}>
-                ✓ مشترك
-              </div>
-            )}
+            <div style={{ background: "rgba(37,99,235,0.2)", border: "1px solid rgba(37,99,235,0.4)", padding: "6px 14px", borderRadius: 100, fontSize: 13, color: "#93c5fd", fontWeight: 600 }}>
+              ✓ مشترك
+            </div>
           </div>
         </div>
       </nav>
@@ -90,7 +102,7 @@ export default function Content() {
           <div style={{ background: "#000", position: "relative", paddingBottom: "56.25%", width: "100%" }}>
             <iframe
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }}
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&rel=0&modestbranding=1"
+              src="https://www.youtube.com/embed/rfscVS0vtbw?autoplay=0&rel=0&modestbranding=1"
               title={lessons[activeLesson]?.title || "مقدمة الكورس"}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -139,7 +151,7 @@ export default function Content() {
           </div>
         </div>
 
-        {/* Sidebar — Curriculum */}
+        {/* Sidebar */}
         <div style={{ background: "#1e293b", borderRight: "1px solid rgba(255,255,255,0.06)", overflow: "auto", display: "flex", flexDirection: "column" }}>
           <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
             <h2 style={{ fontSize: 16, fontWeight: 900, color: "#fff", marginBottom: 4 }}>محتوى الكورس</h2>
@@ -181,7 +193,6 @@ export default function Content() {
             ))}
           </div>
 
-          {/* Certificate CTA */}
           <div style={{ padding: 20, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.2), rgba(29,78,216,0.2))", borderRadius: 14, padding: 16, border: "1px solid rgba(37,99,235,0.3)", textAlign: "center" }}>
               <div style={{ fontSize: 28, marginBottom: 8 }}>🏆</div>
