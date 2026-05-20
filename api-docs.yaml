@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  title: IT Legend Course Platform API
+  description: API for the IT Legend online course platform — handles courses, checkout, and content access.
+  version: 1.0.0
+  contact:
+    name: Ali Shahin
+    email: alishahin8811@gmail.com
+
+servers:
+  - url: https://course-platform-theta-two.vercel.app/api
+    description: Production Server (Vercel)
+
+paths:
+
+  /courses:
+    get:
+      summary: Get all courses
+      description: Returns a list of all available courses on the platform.
+      operationId: getAllCourses
+      responses:
+        '200':
+          description: List of courses returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+              example:
+                - id: "1"
+                  title: "ASP.NET Core Masterclass"
+                  description: "Learn backend development with ASP.NET Core"
+                  price: 99
+                  category: "Backend Development"
+                  hours: 42
+                  lessons: 87
+                  level: "Beginner → Pro"
+                  rating: 4.9
+                  students: 12400
+
+  /courses/{id}:
+    get:
+      summary: Get course by ID
+      description: Returns full details for a single course by its ID.
+      operationId: getCourseById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Course ID (1–5)
+          schema:
+            type: string
+            example: "1"
+      responses:
+        '200':
+          description: Course found and returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        '404':
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Course not found"
+
+  /checkout:
+    post:
+      summary: Process checkout
+      description: >
+        Processes a course purchase. Accepts customer name, email, course IDs, and total price.
+        Note: price validation is handled client-side only.
+      operationId: processCheckout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+            example:
+              name: "Ali Shahin"
+              email: "ali@example.com"
+              courseIds: ["1", "2"]
+              total: 178
+      responses:
+        '200':
+          description: Order processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+              example:
+                success: true
+                order:
+                  id: "abc123xyz"
+                  name: "Ali Shahin"
+                  email: "ali@example.com"
+                  courseIds: ["1", "2"]
+                  total: 178
+                  createdAt: "2026-05-20T10:00:00.000Z"
+
+  /content/{id}:
+    get:
+      summary: Get course content
+      description: >
+        Returns the content for a course by ID.
+        Note: no purchase verification is performed — content is accessible without authentication.
+      operationId: getCourseContent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Course ID (1–5)
+          schema:
+            type: string
+            example: "1"
+      responses:
+        '200':
+          description: Course content returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentResponse'
+              example:
+                content: "ASP.NET Core Masterclass content — videos, projects, and full source code."
+        '404':
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: "ASP.NET Core Masterclass"
+        description:
+          type: string
+          example: "Learn backend development with ASP.NET Core from scratch."
+        longDescription:
+          type: string
+          example: "A comprehensive course covering RESTful APIs, Entity Framework, Authentication, and Deployment."
+        price:
+          type: number
+          example: 99
+        category:
+          type: string
+          enum:
+            - Backend Development
+            - Frontend Development
+            - Mobile Development
+            - Artificial Intelligence
+            - Software Engineering
+        hours:
+          type: number
+          example: 42
+        lessons:
+          type: number
+          example: 87
+        level:
+          type: string
+          example: "Beginner → Pro"
+        language:
+          type: string
+          example: "Arabic"
+        lastUpdate:
+          type: string
+          example: "May 2026"
+        rating:
+          type: number
+          example: 4.9
+        students:
+          type: number
+          example: 12400
+
+    CheckoutRequest:
+      type: object
+      required:
+        - name
+        - email
+        - courseIds
+        - total
+      properties:
+        name:
+          type: string
+          example: "Ali Shahin"
+        email:
+          type: string
+          format: email
+          example: "ali@example.com"
+        courseIds:
+          type: array
+          items:
+            type: string
+          example: ["1", "2"]
+        total:
+          type: number
+          description: Total price submitted by client (no server-side validation)
+          example: 178
+
+    CheckoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        order:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "abc123xyz"
+            name:
+              type: string
+              example: "Ali Shahin"
+            email:
+              type: string
+              example: "ali@example.com"
+            courseIds:
+              type: array
+              items:
+                type: string
+            total:
+              type: number
+              example: 178
+            createdAt:
+              type: string
+              format: date-time
+              example: "2026-05-20T10:00:00.000Z"
+
+    ContentResponse:
+      type: object
+      properties:
+        content:
+          type: string
+          example: "Course content text and materials."
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Course not found"
