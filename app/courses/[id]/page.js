@@ -40,7 +40,9 @@ export default function CourseDetail() {
   }
 
   // Bug 1: Buy Now button does nothing
-  function handleBuyNow() {}
+function handleBuyNow() {
+  alert("حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.");
+}
 
   return (
     <main style={{ fontFamily: "Cairo, sans-serif", background: "#f8fafc", minHeight: "100vh" }}>

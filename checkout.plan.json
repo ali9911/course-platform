@@ -1,0 +1,17 @@
+{
+  "projectId": "1acef772-6395-44d9-9f5f-32357bf149c0",
+  "type": "frontend",
+  "name": "Security Bug Tests2",
+  "planSteps": [
+    { "type": "action", "description": "Navigate directly to https://course-platform-theta-two.vercel.app/content/1 without adding any course to cart or completing checkout" },
+    { "type": "assertion", "description": "Verify that a success enrollment message appears saying the user is subscribed even though no purchase was made" },
+    { "type": "action", "description": "Navigate to https://course-platform-theta-two.vercel.app/courses/1" },
+    { "type": "action", "description": "Click the button that says اشتري دلوقتي which is the Buy Now button" },
+    { "type": "assertion", "description": "Verify that nothing happens when the Buy Now button is clicked - no navigation, no modal, no response of any kind" },
+    { "type": "action", "description": "Click the button that says اضف للسلة to add the course to the cart" },
+    { "type": "action", "description": "Navigate to https://course-platform-theta-two.vercel.app/checkout" },
+    { "type": "action", "description": "Leave the name and email fields completely empty and click the checkout submit button" },
+    { "type": "assertion", "description": "Verify that the checkout process completes successfully even though name and email fields were left empty" },
+    { "type": "assertion", "description": "Verify that the subscribed badge appears in the navbar showing the user as subscribed even though no valid payment was made" }
+  ]
+}

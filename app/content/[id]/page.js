@@ -22,16 +22,18 @@ export default function Content() {
   const [progress, setProgress] = useState(15);
   const [enrollMessage, setEnrollMessage] = useState(false);
 
-  useEffect(() => {
-    // Bug 3: fetches content without verifying purchase
-    // Bug 5: shows fake enrollment success message to all users
-    fetch(`/api/content/${id}`)
-      .then(r => r.json())
-      .then(data => {
-        setContent(data.content);
-        setEnrollMessage(true);
-      });
-  }, [id]);
+useEffect(() => {
+  fetch(`/api/content/${id}`)
+    .then(r => r.json())
+    .then(data => {
+      setContent(data.content);
+      setEnrollMessage(true);
+      // Bug: shows error AND content at same time
+      if (!purchased) {
+        setContentError("خطأ: غير مصرح لك بمشاهدة هذا المحتوى");
+      }
+    });
+}, [id]);
 
   if (!course) return <div style={{ padding: 40, textAlign: "center" }}>الكورس مش موجود</div>;
 
