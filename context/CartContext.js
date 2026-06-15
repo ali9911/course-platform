@@ -12,9 +12,8 @@ export function CartProvider({ children }) {
     if (saved) setPurchases(JSON.parse(saved));
   }, []);
 
-  // Bug 2: no duplicate check
   function addToCart(course) {
-    setCart(prev => [...prev, course]);
+    setCart(prev => prev.some(c => c.id === course.id) ? prev : [...prev, course]);
   }
 
   function removeFromCart(courseId) {

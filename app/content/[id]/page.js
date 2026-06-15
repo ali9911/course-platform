@@ -2,7 +2,7 @@
 import { useCart } from "@/context/CartContext";
 import { courses } from "@/lib/data";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const categoryConfig = {
@@ -17,28 +17,41 @@ export default function Content() {
   const { id } = useParams();
   const { isPurchased } = useCart();
   const course = courses.find(c => c.id === id);
+  const purchased = course ? isPurchased(course.id) : false;
   const [content, setContent] = useState(null);
   const [activeLesson, setActiveLesson] = useState(0);
   const [progress, setProgress] = useState(15);
   const [enrollMessage, setEnrollMessage] = useState(false);
 
-useEffect(() => {
-  fetch(`/api/content/${id}`)
-    .then(r => r.json())
-    .then(data => {
-      setContent(data.content);
-      setEnrollMessage(true);
-      // Bug: shows error AND content at same time
-      if (!purchased) {
-        setContentError("خطأ: غير مصرح لك بمشاهدة هذا المحتوى");
-      }
-    });
-}, [id]);
+  useEffect(() => {
+    if (!purchased) return;
+    fetch(`/api/content/${id}`)
+      .then(r => r.json())
+      .then(data => {
+        setContent(data.content);
+        setEnrollMessage(true);
+      });
+  }, [id, purchased]);
 
   if (!course) return <div style={{ padding: 40, textAlign: "center" }}>الكورس مش موجود</div>;
 
+  if (!purchased) {
+    return (
+      <main style={{ fontFamily: "Cairo, sans-serif", background: "#0f172a", minHeight: "100vh", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');* { font-family: 'Cairo', sans-serif; }`}</style>
+        <div style={{ textAlign: "center", padding: 40 }}>
+          <div style={{ fontSize: 72, marginBottom: 20 }}>🔒</div>
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 12 }}>هذا المحتوى للمشتركين فقط</h2>
+          <p style={{ color: "rgba(255,255,255,0.6)", marginBottom: 28, fontSize: 16 }}>يجب شراء الكورس للوصول إلى المحتوى الكامل</p>
+          <Link href={`/courses/${id}`} style={{ background: "linear-gradient(135deg, #2563eb, #1d4ed8)", color: "#fff", padding: "14px 36px", borderRadius: 12, fontWeight: 800, fontSize: 16, textDecoration: "none" }}>
+            اشتري الكورس
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const cfg = categoryConfig[course.category] || categoryConfig["Backend Development"];
-  const purchased = isPurchased(course.id);
 
   const lessons = course.curriculum?.flatMap(section =>
     Array.from({ length: Math.min(section.lessons, 3) }, (_, i) => ({

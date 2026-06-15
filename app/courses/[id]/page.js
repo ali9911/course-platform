@@ -2,7 +2,7 @@
 import { useCart } from "@/context/CartContext";
 import { courses } from "@/lib/data";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const categoryConfig = {
@@ -25,6 +25,7 @@ export default function CourseDetail() {
   const { id } = useParams();
   const course = courses.find(c => c.id === id);
   const { addToCart, isPurchased } = useCart();
+  const router = useRouter();
   const [openSection, setOpenSection] = useState(0);
   const [added, setAdded] = useState(false);
 
@@ -39,10 +40,10 @@ export default function CourseDetail() {
     setTimeout(() => setAdded(false), 2000);
   }
 
-  // Bug 1: Buy Now button does nothing
-function handleBuyNow() {
-  alert("حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.");
-}
+  function handleBuyNow() {
+    addToCart(course);
+    router.push("/checkout");
+  }
 
   return (
     <main style={{ fontFamily: "Cairo, sans-serif", background: "#f8fafc", minHeight: "100vh" }}>
