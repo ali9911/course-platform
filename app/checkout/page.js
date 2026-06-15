@@ -17,10 +17,19 @@ export default function Checkout() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const [validationError, setValidationError] = useState("");
 
   async function handleSubmit() {
+    if (!name.trim() || !email.trim() || !cardNumber.trim() || !expiry.trim() || !cvv.trim()) {
+      setValidationError("يرجى ملء جميع الحقول المطلوبة قبل إتمام الشراء");
+      return;
+    }
+    setValidationError("");
     setLoading(true);
     const res = await fetch("/api/checkout", {
       method: "POST",
@@ -140,6 +149,8 @@ export default function Checkout() {
                 <input
                   type="text"
                   placeholder="1234 5678 9012 3456"
+                  value={cardNumber}
+                  onChange={e => setCardNumber(e.target.value)}
                   className="input-field"
                   style={{ width: "100%", border: "2px solid #e2e8f0", borderRadius: 12, padding: "14px 16px", fontSize: 15, background: "#fafafa", boxSizing: "border-box" }}
                 />
@@ -147,12 +158,12 @@ export default function Checkout() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div>
                   <label style={{ display: "block", fontWeight: 700, color: "#374151", fontSize: 14, marginBottom: 8 }}>تاريخ الانتهاء</label>
-                  <input type="text" placeholder="MM/YY" className="input-field"
+                  <input type="text" placeholder="MM/YY" value={expiry} onChange={e => setExpiry(e.target.value)} className="input-field"
                     style={{ width: "100%", border: "2px solid #e2e8f0", borderRadius: 12, padding: "14px 16px", fontSize: 15, background: "#fafafa", boxSizing: "border-box" }} />
                 </div>
                 <div>
                   <label style={{ display: "block", fontWeight: 700, color: "#374151", fontSize: 14, marginBottom: 8 }}>CVV</label>
-                  <input type="text" placeholder="123" className="input-field"
+                  <input type="text" placeholder="123" value={cvv} onChange={e => setCvv(e.target.value)} className="input-field"
                     style={{ width: "100%", border: "2px solid #e2e8f0", borderRadius: 12, padding: "14px 16px", fontSize: 15, background: "#fafafa", boxSizing: "border-box" }} />
                 </div>
               </div>
@@ -196,6 +207,11 @@ export default function Checkout() {
               </div>
             </div>
 
+            {validationError && (
+              <div style={{ background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 10, padding: "12px 16px", marginBottom: 12, color: "#dc2626", fontSize: 13, fontWeight: 600, textAlign: "center" }}>
+                ⚠️ {validationError}
+              </div>
+            )}
             <button
               onClick={handleSubmit}
               disabled={loading}
